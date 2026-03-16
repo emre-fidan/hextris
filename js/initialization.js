@@ -211,6 +211,8 @@ function initialize(a) {
 }
 
 function startBtnHandler() {
+	console.log('Hello, Start Button Test Log');
+
 	setTimeout(function() {
 		if (settings.platform == "mobile") {
 			try {
