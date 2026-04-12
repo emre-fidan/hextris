@@ -54,6 +54,7 @@ function Hex(sideLength) {
 		this.blocks[lane].push(block);
 		block.attachedLane = lane;
 		block.checked = 1;
+		playLandSound();
 	};
 
 	this.doesBlockCollide = function(block, position, tArr) {
@@ -132,6 +133,7 @@ function Hex(sideLength) {
 
 		this.targetAngle = this.targetAngle - steps * 60;
 				this.lastRotate = Date.now();
+		playRotateSound();
 	};
 
 	this.draw = function() {
