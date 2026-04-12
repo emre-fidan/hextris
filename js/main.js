@@ -343,6 +343,7 @@ function checkGameOver() {
 			}
 			writeHighScores();
 			gameOverDisplay();
+			playGameOverSound();
 			return true;
 		}
 	}
