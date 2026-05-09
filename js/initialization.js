@@ -11,7 +11,10 @@ function applyTheme(themeName) {
 	window.uiTextColor = isDark ? '#ecf0f1' : '#2c3e50';
 	window.scoreTextColor = isDark ? '#f8fafc' : 'rgb(236, 240, 241)';
 	document.body.classList.toggle('theme-dark', isDark);
-	$('#darkModeToggle').text(isDark ? 'Light Mode' : 'Dark Mode');
+	$('#darkModeToggle')
+		.html(isDark ? '<i class="fa fa-lightbulb-o" aria-hidden="true"></i>' : '<i class="fa fa-moon-o" aria-hidden="true"></i>')
+		.attr('aria-label', isDark ? 'Enable light mode' : 'Enable dark mode')
+		.attr('title', isDark ? 'Enable light mode' : 'Enable dark mode');
 	localStorage.setItem('theme', themeName);
 }
 
