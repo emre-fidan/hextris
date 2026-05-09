@@ -1,6 +1,24 @@
 $(document).ready(function() {
 	initialize();
 });
+
+function applyTheme(themeName) {
+	var isDark = themeName === "dark";
+	window.currentTheme = themeName;
+	window.hexagonBackgroundColor = isDark ? 'rgb(17, 20, 23)' : 'rgb(236, 240, 241)';
+	window.hexagonBackgroundColorClear = isDark ? 'rgba(17, 20, 23, 0.5)' : 'rgba(236, 240, 241, 0.5)';
+	window.pauseOverlayColor = isDark ? 'rgb(17, 20, 23)' : 'rgb(236,240,241)';
+	window.uiTextColor = isDark ? '#ecf0f1' : '#2c3e50';
+	window.scoreTextColor = isDark ? '#f8fafc' : 'rgb(236, 240, 241)';
+	document.body.classList.toggle('theme-dark', isDark);
+	$('#darkModeToggle').text(isDark ? 'Light Mode' : 'Dark Mode');
+	localStorage.setItem('theme', themeName);
+}
+
+function toggleTheme() {
+	applyTheme(window.currentTheme === "dark" ? "light" : "dark");
+}
+
 function initialize(a) {
 	window.rush = 1;
 	window.lastTime = Date.now();
@@ -27,9 +45,12 @@ function initialize(a) {
 		"rgb(46,204,113)": "rgb(150,227,183)"
 	};
 
-	window.hexagonBackgroundColor = 'rgb(236, 240, 241)';
-	window.hexagonBackgroundColorClear = 'rgba(236, 240, 241, 0.5)';
+	window.comboTimerColor = '#ff2ea6';
+	window.comboTimerStartColor = 'rgb(255, 143, 214)';
 	window.centerBlue = 'rgb(44,62,80)';
+	window.pauseOverlayColor = 'rgb(236,240,241)';
+	window.uiTextColor = '#2c3e50';
+	window.scoreTextColor = 'rgb(236, 240, 241)';
 	window.angularVelocityConst = 4;
 	window.scoreOpacity = 0;
 	window.textOpacity = 0;
@@ -133,6 +154,7 @@ function initialize(a) {
 	window.importedHistory = undefined;
 	window.startTime = undefined;
 	window.gameState;
+	applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
 	setStartScreen();
 	if (a != 1) {
 		window.canRestart = 1;
@@ -142,6 +164,12 @@ function initialize(a) {
 			}
 		};
 		$('#startBtn').off();
+		$('#darkModeToggle').off('touchstart mousedown').on('touchstart mousedown', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			toggleTheme();
+			return false;
+		});
 		if (settings.platform == 'mobile') {
 			$('#startBtn').on('touchstart', startBtnHandler);
 		} else {
