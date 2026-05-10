@@ -71,6 +71,7 @@ function resumeGame() {
 	}, 7000);
 
 	checkVisualElements(0);
+	if (window.tutorialOnGameStart) tutorialOnGameStart();
 }
 
 function checkVisualElements(arg) {
@@ -182,6 +183,7 @@ function init(b) {
 	MainHex.texts = []; //clear texts
 	MainHex.delay = 15;
 	hideText();
+	if (window.tutorialOnGameStart) tutorialOnGameStart();
 }
 
 function addNewBlock(blocklane, color, iter, distFromHex, settled) { //last two are optional parameters
@@ -203,6 +205,7 @@ function addNewBlock(blocklane, color, iter, distFromHex, settled) { //last two 
 		blockHist[MainHex.ct].settled = settled;
 	}
 	blocks.push(new Block(blocklane, color, iter, distFromHex, settled));
+	if (window.tutorialOnFirstBlock) tutorialOnFirstBlock();
 }
 
 function exportHistory() {

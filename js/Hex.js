@@ -134,6 +134,7 @@ function Hex(sideLength) {
 		this.targetAngle = this.targetAngle - steps * 60;
 				this.lastRotate = Date.now();
 		playRotateSound();
+		if (window.tutorialOnRotate) tutorialOnRotate(steps);
 	};
 
 	this.draw = function() {
