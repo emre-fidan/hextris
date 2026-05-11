@@ -25,6 +25,7 @@ function addKeyListeners() {
 				if(settings.speedUpKeyHeld == false){
 					settings.speedUpKeyHeld = true;
 					window.rush *=4;
+					if (window.tutorialOnSpeedUp) tutorialOnSpeedUp();
 				}
 			}
 			//settings.speedModifier = tempSpeed;
@@ -32,11 +33,11 @@ function addKeyListeners() {
 		on_keyup:function(){
 			if (MainHex && gameState !== 0){
 				//speed up block temporarily
-				
+
 				window.rush /=4;
 				settings.speedUpKeyHeld = false;
 			}
-		}	
+		}
 	});
 	
 	keypress.register_combo({
@@ -66,6 +67,7 @@ function addKeyListeners() {
 				if(settings.speedUpKeyHeld == false){
 					settings.speedUpKeyHeld = true;
 					window.rush *=4;
+					if (window.tutorialOnSpeedUp) tutorialOnSpeedUp();
 				}
 			}
 			//settings.speedModifier = tempSpeed;
