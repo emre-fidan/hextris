@@ -53,9 +53,9 @@ function calcSide(startVertex,endVertex,fraction,offset){
 }
 function drawSide(vertexes){
 	if (gameState === 0) {
-		ctx.strokeStyle = hexColorsToTintedColors[MainHex.lastColorScored];
+		ctx.strokeStyle = comboTimerStartColor;
 	} else {
-		ctx.strokeStyle = MainHex.lastColorScored;
+		ctx.strokeStyle = comboTimerColor;
 	}
 	ctx.lineWidth =4*settings.scale;
 		ctx.moveTo(vertexes[0][0][0],vertexes[0][0][1]);
