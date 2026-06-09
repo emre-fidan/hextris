@@ -4,10 +4,11 @@ $(document).ready(function() {
 
 function applyTheme(themeName) {
 	var isDark = themeName === "dark";
+
 	window.currentTheme = themeName;
 	window.hexagonBackgroundColor = isDark ? 'rgb(17, 20, 23)' : 'rgb(236, 240, 241)';
 	window.hexagonBackgroundColorClear = isDark ? 'rgba(17, 20, 23, 0.5)' : 'rgba(236, 240, 241, 0.5)';
-	window.pauseOverlayColor = isDark ? 'rgb(17, 20, 23)' : 'rgb(236,240,241)';
+	window.pauseOverlayColor = isDark ? 'rgb(17,20,23)' : 'rgb(236,240,241)';
 	window.uiTextColor = isDark ? '#ecf0f1' : '#2c3e50';
 	window.scoreTextColor = isDark ? '#f8fafc' : 'rgb(236, 240, 241)';
 	document.body.classList.toggle('theme-dark', isDark);
@@ -16,6 +17,7 @@ function applyTheme(themeName) {
 		.attr('aria-label', isDark ? 'Enable light mode' : 'Enable dark mode')
 		.attr('title', isDark ? 'Enable light mode' : 'Enable dark mode');
 	localStorage.setItem('theme', themeName);
+	registerAnalyticsTheme(themeName);
 }
 
 function toggleTheme() {
@@ -120,6 +122,9 @@ function initialize(a) {
 	if(navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i)){
 		settings.os="ios";
 	}
+
+	setupAnalytics();
+	applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
 
 	window.canvas = document.getElementById('canvas');
 	window.ctx = canvas.getContext('2d');
@@ -242,7 +247,8 @@ function initialize(a) {
 }
 
 function startBtnHandler() {
-	console.log('Hello, Start Button Test Log');
+	beginAnalyticsSession(importing !== 1);
+	registerAnalyticsInputMode(settings.platform === "mobile" ? "touch" : "keyboard_mouse");
 
 	setTimeout(function() {
 		if (settings.platform == "mobile") {
@@ -297,10 +303,12 @@ function handlePause() {
 }
 
 function handleTap(e) {
+	registerAnalyticsInputMode("touch");
 	handleClickTap(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
 }
 
 function handleClick(e) {
+	registerAnalyticsInputMode("keyboard_mouse");
 	handleClickTap(e.clientX, e.clientY);
 }
 

@@ -185,6 +185,7 @@ function pause(o) {
 
 	var c = document.getElementById("canvas");
 	if (gameState == -1) {
+		resumeAnalyticsGameplay();
 		$('#fork-ribbon').fadeOut(300, 'linear');
 		$('#restartBtn').fadeOut(300, "linear");
 		$('#buttonCont').fadeOut(300, "linear");
@@ -201,6 +202,8 @@ function pause(o) {
 			pausable =true;
 		}, 400);
 	} else if (gameState != -2 && gameState !== 0 && gameState !== 2) {
+		registerAnalyticsPause();
+		pauseAnalyticsGameplay();
 		$('#restartBtn').fadeIn(300, "linear");
 		$('#buttonCont').fadeIn(300, "linear");
 		$('.helpText').fadeIn(300, 'linear');

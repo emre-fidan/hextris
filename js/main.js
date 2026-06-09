@@ -58,6 +58,7 @@ function toggleDevTools() {
 }
 
 function resumeGame() {
+	resumeAnalyticsGameplay();
 	gameState = 1;
 	hideUIElements();
 	$('#pauseBtn').show();
@@ -178,6 +179,7 @@ function init(b) {
 	MainHex.y = -100;
 
 	startTime = Date.now();
+	resumeAnalyticsGameplay();
 	waveone = saveState.wavegen || new waveGen(MainHex);
 
 	MainHex.texts = []; //clear texts
@@ -206,6 +208,7 @@ function addNewBlock(blocklane, color, iter, distFromHex, settled) { //last two 
 	}
 	blocks.push(new Block(blocklane, color, iter, distFromHex, settled));
 	if (window.tutorialOnFirstBlock) tutorialOnFirstBlock();
+	registerAnalyticsBlockSpawn();
 }
 
 function exportHistory() {
@@ -273,6 +276,7 @@ function animLoop() {
 
 			canRestart = 0;
 			clearSaveState();
+			finalizeAnalyticsSession("game_over");
 		}
 		break;
 
@@ -354,6 +358,7 @@ function checkGameOver() {
 }
 
 function showHelp() {
+	registerAnalyticsHelpOpened();
 	if ($('#openSideBar').attr('src') == './images/btn_back.svg') {
 		$('#openSideBar').attr('src', './images/btn_help.svg');
 		if (gameState != 0 && gameState != -1 && gameState != 2) {
