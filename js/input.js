@@ -3,6 +3,7 @@ function addKeyListeners() {
 		keys: "left",
 		on_keydown: function() {
 			if (MainHex && gameState !== 0) {
+				registerAnalyticsInputMode("keyboard_mouse");
 				MainHex.rotate(1);
 			}
 		}
@@ -12,6 +13,7 @@ function addKeyListeners() {
 		keys: "right",
 		on_keydown: function() {
 			if (MainHex && gameState !== 0){
+				registerAnalyticsInputMode("keyboard_mouse");
 				MainHex.rotate(-1);
 			}
 		}
@@ -23,6 +25,8 @@ function addKeyListeners() {
 			if (MainHex && gameState !== 0){
 				//speed up block temporarily
 				if(settings.speedUpKeyHeld == false){
+					registerAnalyticsInputMode("keyboard_mouse");
+					registerAnalyticsSpeedUpUse();
 					settings.speedUpKeyHeld = true;
 					window.rush *=4;
 					if (window.tutorialOnSpeedUp) tutorialOnSpeedUp();
@@ -44,6 +48,7 @@ function addKeyListeners() {
 		keys: "a",
 		on_keydown: function() {
 			if (MainHex && gameState !== 0) {
+				registerAnalyticsInputMode("keyboard_mouse");
 				MainHex.rotate(1);
 			}
 		}
@@ -53,6 +58,7 @@ function addKeyListeners() {
 		keys: "d",
 		on_keydown: function() {
 			if (MainHex && gameState !== 0){
+				registerAnalyticsInputMode("keyboard_mouse");
 				MainHex.rotate(-1);
 			}
 		}
@@ -65,6 +71,8 @@ function addKeyListeners() {
 			if (MainHex && gameState !== 0){
 				//speed up block temporarily
 				if(settings.speedUpKeyHeld == false){
+					registerAnalyticsInputMode("keyboard_mouse");
+					registerAnalyticsSpeedUpUse();
 					settings.speedUpKeyHeld = true;
 					window.rush *=4;
 					if (window.tutorialOnSpeedUp) tutorialOnSpeedUp();
@@ -102,19 +110,27 @@ function addKeyListeners() {
 		keys: "enter",
 		on_keydown: function() {
 			if (gameState==1 || importing == 1) {
+				if (gameState == 1 && window.analyticsState && window.analyticsState.active) {
+					registerAnalyticsRestart();
+				} else if (!window.analyticsState || !window.analyticsState.active) {
+					beginAnalyticsSession(importing !== 1);
+				}
 				init(1);
 			}
 			if (gameState == 2) {
+				beginAnalyticsSession(false);
 				init();
 				$("#gameoverscreen").fadeOut();
 			}
 			if (gameState===0) {
+				beginAnalyticsSession(importing !== 1);
 				resumeGame();
 			}
 		}
 	});
 
-	$("#pauseBtn").on('touchstart mousedown', function() {
+	$("#pauseBtn").on('touchstart mousedown', function(e) {
+		registerAnalyticsInputMode(/touch/.test(e.type) ? "touch" : "keyboard_mouse");
 		if (gameState != 1 && gameState != -1) {
 			return;
 		}
@@ -154,6 +170,12 @@ function addKeyListeners() {
 
 	if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 			$("#restart").on('touchstart', function() {
+			if (window.analyticsState && window.analyticsState.active) {
+				registerAnalyticsRestart();
+			} else {
+				beginAnalyticsSession(false);
+			}
+			registerAnalyticsInputMode("touch");
 			init();
 			canRestart = false;
 			$("#gameoverscreen").fadeOut();
@@ -162,6 +184,12 @@ function addKeyListeners() {
 	}
 	else {
 		$("#restart").on('mousedown', function() {
+			if (window.analyticsState && window.analyticsState.active) {
+				registerAnalyticsRestart();
+			} else {
+				beginAnalyticsSession(false);
+			}
+			registerAnalyticsInputMode("keyboard_mouse");
 			init();
 			canRestart = false;
 			$("#gameoverscreen").fadeOut();
@@ -170,6 +198,12 @@ function addKeyListeners() {
 	}
 	if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 			$("#restartBtn").on('touchstart', function() {
+			if (window.analyticsState && window.analyticsState.active) {
+				registerAnalyticsRestart();
+			} else {
+				beginAnalyticsSession(false);
+			}
+			registerAnalyticsInputMode("touch");
 			init(1);
 			canRestart = false;
 			$("#gameoverscreen").fadeOut();
@@ -178,6 +212,12 @@ function addKeyListeners() {
 	}
 	else {
 		$("#restartBtn").on('mousedown', function() {
+			if (window.analyticsState && window.analyticsState.active) {
+				registerAnalyticsRestart();
+			} else {
+				beginAnalyticsSession(false);
+			}
+			registerAnalyticsInputMode("keyboard_mouse");
 			init(1);
 			canRestart = false;
 			$("#gameoverscreen").fadeOut();
