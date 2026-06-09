@@ -91,6 +91,7 @@ function hideUIElements() {
 
 function init(b) {
 	if(settings.ending_block && b == 1){return;}
+	initVisualEffects();
 	if (b) {
 		$("#pauseBtn").attr('src',"./images/btn_pause.svg");
 		if ($('#helpScreen').is(":visible")) {
