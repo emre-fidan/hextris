@@ -65,11 +65,11 @@ function consolidateBlocks(hex,side,index){
 
 	// add scores
 	var now = MainHex.ct;
+	var coords = findCenterOfBlocks(deletedBlocks);
 	if(now - hex.lastCombo < settings.comboTime ){
 		settings.comboTime = (1/settings.creationSpeedModifier) * (waveone.nextGen/16.666667) * 3;
 		hex.comboMultiplier += 1;
 		hex.lastCombo = now;
-		var coords = findCenterOfBlocks(deletedBlocks);
 		hex.texts.push(new Text(coords['x'],coords['y'],"x "+hex.comboMultiplier.toString(),"bold Q","#fff",fadeUpAndOut));
 	}
 	else{
@@ -81,6 +81,7 @@ function consolidateBlocks(hex,side,index){
 	hex.texts.push(new Text(hex.x,hex.y,"+ "+adder.toString(),"bold Q ",deletedBlocks[0].color,fadeUpAndOut));
 		hex.lastColorScored = deletedBlocks[0].color;
 	registerAnalyticsClearEvent(deleting.length, hex.comboMultiplier);
+	triggerClearEffect(deleting.length, hex.comboMultiplier, coords, deletedBlocks[0].color);
 	score += adder;
 	playClearSound(hex.comboMultiplier);
 	if (window.tutorialOnFirstMatch) tutorialOnFirstMatch();

@@ -28,6 +28,7 @@ function render() {
 	}
 
 	MainHex.draw();
+	renderVisualForeground();
 	if (gameState ==1 || gameState ==-1 || gameState === 0) {
 		drawScoreboard();
 	}

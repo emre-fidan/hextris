@@ -132,6 +132,7 @@ function initialize(a) {
 		width: canvas.width,
 		height: canvas.height
 	};
+	initVisualEffects();
 	scaleCanvas();
 
 	window.framerate = 60;
