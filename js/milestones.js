@@ -1,15 +1,35 @@
 window.MILESTONE_THRESHOLDS = [500, 1000, 1500, 2500, 3000, 5000, 7500, 10000];
 
+// each step: page = page + giant background hexagon, play = central play-area hexagon, accent = flash color
 window.MILESTONE_PALETTE = {
-	light: ['#e2ecf7', '#d9f0ec', '#ddf2d9', '#f5eccf', '#f7e3cd', '#f7dde7', '#ebdcf6', '#dcd9f7'],
-	dark: ['#101a26', '#0e2120', '#122112', '#262011', '#291811', '#291320', '#1f1430', '#191243']
+	light: [
+		{ page: '#cfe5fb', play: '#aac6e6', accent: '#3b82f6' },
+		{ page: '#c4f0e8', play: '#9fd0c5', accent: '#14b8a6' },
+		{ page: '#cdf2c4', play: '#a9d0a3', accent: '#22c55e' },
+		{ page: '#fceebb', play: '#ddc991', accent: '#f59e0b' },
+		{ page: '#fcdcba', play: '#e0b394', accent: '#f97316' },
+		{ page: '#fbcfe0', play: '#e0a8bf', accent: '#ec4899' },
+		{ page: '#e6cdf9', play: '#c2a8de', accent: '#a855f7' },
+		{ page: '#ccc8fb', play: '#a8a3e3', accent: '#6366f1' }
+	],
+	dark: [
+		{ page: '#0d1f33', play: '#16344f', accent: '#3b82f6' },
+		{ page: '#0a2925', play: '#14443d', accent: '#14b8a6' },
+		{ page: '#0f2a0d', play: '#1c4519', accent: '#22c55e' },
+		{ page: '#2b2208', play: '#463a12', accent: '#f59e0b' },
+		{ page: '#301a09', play: '#4e2c12', accent: '#f97316' },
+		{ page: '#310f24', play: '#4f1b3b', accent: '#ec4899' },
+		{ page: '#250f3d', play: '#3d1c60', accent: '#a855f7' },
+		{ page: '#131060', play: '#221d8f', accent: '#6366f1' }
+	]
 };
 
 function createMilestoneState() {
 	return {
 		reachedIndex: -1,
 		previousBest: null,
-		recordCelebrated: false
+		recordCelebrated: false,
+		suppressFlash: false
 	};
 }
 
@@ -23,15 +43,21 @@ function setupMilestones() {
 	window.milestoneStylesInjected = true;
 	style = document.createElement('style');
 	style.textContent =
-		"body, #canvas { transition: background-color 1.2s ease; }\n" +
+		"body, #canvas { transition: background-color 0.5s ease; }\n" +
 		"#canvas { background-color: transparent; }\n" +
-		"#milestone-record-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }\n" +
+		"#milestone-record-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 40; pointer-events: none; overflow: hidden; }\n" +
 		".milestone-record-text { position: absolute; top: -18vh; font-family: 'Exo', sans-serif; font-weight: bold; white-space: nowrap; will-change: transform, opacity; opacity: 0; animation-name: milestoneRecordFall; animation-timing-function: linear; animation-fill-mode: forwards; }\n" +
 		"@keyframes milestoneRecordFall {\n" +
 		"	0% { transform: translateY(0); opacity: 0; }\n" +
 		"	12% { opacity: 1; }\n" +
 		"	88% { opacity: 1; }\n" +
 		"	100% { transform: translateY(140vh); opacity: 0; }\n" +
+		"}\n" +
+		".milestone-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 60; pointer-events: none; opacity: 0; animation: milestoneFlashPulse ease-out forwards; }\n" +
+		"@keyframes milestoneFlashPulse {\n" +
+		"	0% { opacity: 0; }\n" +
+		"	18% { opacity: var(--flash-peak, 0.4); }\n" +
+		"	100% { opacity: 0; }\n" +
 		"}";
 	document.head.appendChild(style);
 }
@@ -55,13 +81,21 @@ function getStoredBestScore() {
 
 function applyMilestoneBackground() {
 	var theme = window.currentTheme === 'dark' ? 'dark' : 'light';
+	var step;
 
 	if (!window.milestoneState || window.milestoneState.reachedIndex < 0) {
 		document.body.style.removeProperty('--page-bg');
+		if (window.milestoneThemeHexDefault) {
+			window.hexagonBackgroundColor = window.milestoneThemeHexDefault;
+		}
+		window.milestonePlayAreaColor = null;
 		return;
 	}
 
-	document.body.style.setProperty('--page-bg', MILESTONE_PALETTE[theme][window.milestoneState.reachedIndex]);
+	step = MILESTONE_PALETTE[theme][window.milestoneState.reachedIndex];
+	document.body.style.setProperty('--page-bg', step.page);
+	window.hexagonBackgroundColor = step.page;
+	window.milestonePlayAreaColor = step.play;
 }
 
 function milestonesOnGameStart() {
@@ -69,8 +103,10 @@ function milestonesOnGameStart() {
 	window.milestoneState = createMilestoneState();
 	window.milestoneState.previousBest = getStoredBestScore();
 	removeRecordCelebration();
-	// resumed saved games restore their score before this hook runs
+	// resumed saved games restore their score before this hook runs; sync silently
+	window.milestoneState.suppressFlash = true;
 	milestonesOnScoreChange(window.score || 0);
+	window.milestoneState.suppressFlash = false;
 	if (window.milestoneState.reachedIndex < 0) {
 		applyMilestoneBackground();
 	}
@@ -91,6 +127,9 @@ function milestonesOnScoreChange(currentScore) {
 	if (idx !== window.milestoneState.reachedIndex) {
 		window.milestoneState.reachedIndex = idx;
 		applyMilestoneBackground();
+		if (!window.milestoneState.suppressFlash) {
+			showMilestoneFlash(idx);
+		}
 	}
 
 	if (window.milestoneState.previousBest !== null &&
@@ -102,7 +141,26 @@ function milestonesOnScoreChange(currentScore) {
 }
 
 function milestonesOnThemeChange() {
+	// applyTheme just wrote the theme default; remember it so the base state can restore it
+	window.milestoneThemeHexDefault = window.hexagonBackgroundColor;
 	applyMilestoneBackground();
+}
+
+function showMilestoneFlash(idx) {
+	var theme = window.currentTheme === 'dark' ? 'dark' : 'light';
+	var accent = MILESTONE_PALETTE[theme][idx].accent;
+	var flash = document.createElement('div');
+
+	flash.className = 'milestone-flash';
+	flash.style.background = 'radial-gradient(circle, ' + accent + ' 0%, rgba(0,0,0,0) 72%)';
+	flash.style.setProperty('--flash-peak', String(0.32 + idx * 0.04));
+	flash.style.animationDuration = (0.7 + idx * 0.05) + 's';
+	document.body.appendChild(flash);
+	setTimeout(function() {
+		if (flash.parentNode) {
+			flash.parentNode.removeChild(flash);
+		}
+	}, 1400);
 }
 
 function showNewRecordCelebration() {

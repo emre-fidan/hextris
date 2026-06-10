@@ -1,7 +1,7 @@
 function render() {
-	var grey = '#bdc3c7';
+	var grey = window.milestonePlayAreaColor || '#bdc3c7';
 	if (gameState === 0) {
-		grey = "rgb(220, 223, 225)";
+		grey = window.milestonePlayAreaColor || "rgb(220, 223, 225)";
 	}
 	
 	ctx.clearRect(0, 0, trueCanvas.width, trueCanvas.height);
