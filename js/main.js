@@ -73,6 +73,7 @@ function resumeGame() {
 
 	checkVisualElements(0);
 	if (window.tutorialOnGameStart) tutorialOnGameStart();
+	if (window.milestonesOnGameStart) milestonesOnGameStart();
 }
 
 function checkVisualElements(arg) {
@@ -187,6 +188,7 @@ function init(b) {
 	MainHex.delay = 15;
 	hideText();
 	if (window.tutorialOnGameStart) tutorialOnGameStart();
+	if (window.milestonesOnGameStart) milestonesOnGameStart();
 }
 
 function addNewBlock(blocklane, color, iter, distFromHex, settled) { //last two are optional parameters
