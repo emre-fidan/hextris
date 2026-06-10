@@ -83,6 +83,7 @@ function consolidateBlocks(hex,side,index){
 	registerAnalyticsClearEvent(deleting.length, hex.comboMultiplier);
 	triggerClearEffect(deleting.length, hex.comboMultiplier, coords, deletedBlocks[0].color);
 	score += adder;
+	if (window.milestonesOnScoreChange) milestonesOnScoreChange(score);
 	playClearSound(hex.comboMultiplier);
 	if (window.tutorialOnFirstMatch) tutorialOnFirstMatch();
 }

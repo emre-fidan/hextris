@@ -1,6 +1,6 @@
 window.ANALYTICS_CONFIG = window.ANALYTICS_CONFIG || {
 	endpoint: "https://raspi.tailcb08bd.ts.net/api/session-summary",
-	buildVersion: "2026-06-09-frontend-1"
+	buildVersion: "2026-06-10-frontend-2"
 };
 
 function getAnalyticsDefaultInputMode() {

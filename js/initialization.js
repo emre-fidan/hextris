@@ -18,6 +18,7 @@ function applyTheme(themeName) {
 		.attr('title', isDark ? 'Enable light mode' : 'Enable dark mode');
 	localStorage.setItem('theme', themeName);
 	registerAnalyticsTheme(themeName);
+	if (window.milestonesOnThemeChange) milestonesOnThemeChange(themeName);
 }
 
 function toggleTheme() {
